@@ -20,7 +20,7 @@ Get all geographical infomraton about street's
 ## Response
 <code>
 data: {
-    response: [], // response format about information <a href="http://open.mapquestapi.com/geocoding/#parameters" target="_blank"> here </a> <br/>
+    response: [], // response format about information <a href="http://open.mapquestapi.com/geocoding/#parameters" target="_blank"> here </a> <br />
     geojson: {} // gejson format <a href="http://geojson.org" target="_blank"> here </a>
 }
 </code>

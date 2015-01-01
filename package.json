@@ -1,0 +1,25 @@
+{
+  "name": "mapquest-geojson",
+  "version": "1.0.0",
+  "description": "Mapquest API library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "underscore": "^1.7.0",
+    "request": "2.47.0"
+  },
+  "keywords": [
+    "mapquest"
+  ],
+  "author": {
+    "name": "Giuseppe Zileni http://www.gzileni.name",
+    "url": "me@gzileni.name , @gzileni"
+  },
+  "license": "CC 1.0",
+  "bugs": {
+    "url": "https://github.com/giuseppezileni/mapquest-geojson/issues"
+  },
+  "homepage": "https://github.com/giuseppezileni/mapquest-geojson"
+}

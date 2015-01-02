@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var request = require("request");
 
-module.exports.version = '1.0.0';
+module.exports.version = '1.0.1';
 
 module.exports = {
   _appkey: 'Fmjtd%7Cluurn162n0%2C7a%3Do5-9wtsuw', // Your API KEY !!!!!!

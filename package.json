@@ -1,13 +1,12 @@
 {
   "name": "mapquest-geojson",
-  "version": "2.0.0",
-  "description": "Mapquest API library",
-  "main": "index.js",
+  "version": "2.0.1",
+  "description": "NodeJS module do get Mapquest API Open Platform library and convert to GEOJSON Data",
+  "main": "mapquest-geojson.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "underscore": "^1.7.0",
     "request": "2.47.0"
   },
   "keywords": [
@@ -17,7 +16,7 @@
     "name": "Giuseppe Zileni http://www.gzileni.name",
     "url": "me@gzileni.name , @gzileni"
   },
-  "license": "CC 1.0",
+  "license": "MIT License",
   "bugs": {
     "url": "https://github.com/giuseppezileni/mapquest-geojson/issues"
   },

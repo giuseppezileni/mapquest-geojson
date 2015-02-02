@@ -1,6 +1,6 @@
 {
   "name": "mapquest-geojson",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "NodeJS module do get Mapquest API Open Platform library and convert to GEOJSON Data",
   "main": "mapquest-geojson.js",
   "scripts": {
@@ -24,7 +24,7 @@
   "readme": "## mapquest-geojson\n\n## install\n\n<code> npm install mapquest-geojson </code>\n\n## Config\nUpdate your API Key Mapquest API Developer\n\n## usage\n<code> var mapquest = require('mapquest-geojson');</code>\n\n<h2>Geocodind</h2>\nGet all geographical infomraton about street's \n\n<code> geocode (street, city, state, format, function (data) {\n// your code\n}); </code>\n\n## Response\n<code>\ndata: {\n    response: [],  <br />\n    geojson: {}\n}\n</code>\n\nResponse format about OSM API click <a href=\"http://open.mapquestapi.com/geocoding/#parameters\" target=\"_blank\"> here </a><br />\nGejson format <a href=\"http://geojson.org\" target=\"_blank\"> here </a>\n\n",
   "readmeFilename": "README.md",
   "gitHead": "b092a29d0110812d7a46796cfdd7576024a16e27",
-  "_id": "mapquest-geojson@1.0.1",
-  "_shasum": "5ae20bc2574c4a12742abd85fbdd2d56ee0294ce",
-  "_from": "mapquest-geojson@1.0.1"
+  "_id": "mapquest-geojson@2.0.1",
+  "_shasum": "9b0124e5e81acfc0229fb5bdcfae30445835316f",
+  "_from": "mapquest-geojson@x.x.x"
 }

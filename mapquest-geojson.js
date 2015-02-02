@@ -2,7 +2,7 @@ var request = require("request");
 var _config = require('./mapquest-geojson.config.js');
 var _geojson = require('./mapquest-geojson.geojson.js');
 
-module.exports.version = '2.0.1';
+module.exports.version = '2.0.2';
 
 var mapquest_data;
 var mapquest = {
@@ -67,7 +67,8 @@ module.exports = {
             if (typeof callback === 'function') {
                 callback(mapquest, geojson);
             };
-    });      
+        };
+      });      
   }, 
 
   route: function (origin, destination, city, state, callback) {

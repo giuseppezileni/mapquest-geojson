@@ -1,4 +1,4 @@
-module.exports.version = '2.0.1';
+module.exports.version = '2.0.2';
 
 var geojson = {
     type : "FeatureCollection",
@@ -54,7 +54,7 @@ module.exports = {
             i++;
         };
         return geojson;
-    };
+    }
 };
 
 function create_geojson_point (lat, lng, title) {

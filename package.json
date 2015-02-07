@@ -1,13 +1,15 @@
 {
   "name": "mapquest-geojson",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "description": "NodeJS module do get Mapquest API Open Platform library and convert to GEOJSON Data",
   "main": "mapquest-geojson.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "request": "2.47.0"
+    "request": "2.47.0",
+    "underscore": "x.x.x",
+    "async": "x.x.x"
   },
   "keywords": [
     "mapquest"

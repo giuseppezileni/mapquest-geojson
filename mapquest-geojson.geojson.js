@@ -1,4 +1,4 @@
-module.exports.version = '2.0.2';
+module.exports.version = '2.0.4';
 
 var geojson = {
     type : "FeatureCollection",
@@ -7,55 +7,36 @@ var geojson = {
 
 module.exports = {
     
-    get: function(data, lat, lng) {
+    get: function(data, callback) {
         geojson.features = []; 
-        var i = 0;
-        while (data.results[i]) {
-            var rs = b.results[i];
-            if (_.size(rs.locations) > 0) {
-                var j = 0;
-                while (rs.locations[j]) {
-                    var location = rs.locations[j];
-                    var lat = location.displayLatLng.lat;
-                    var lng = location.displayLatLng.lng;
-                    var title = location.street + ', ' +  location.postalCode;
-                    var feature = create_geojson_point(lat, lng, title);
-                    geojson.features.push(feature);
-                    j++;
-                };
-            };
-            i++;
-        };
-        return geojson;
+        _run(data.items, callback);
     },
-    get_route: function (data) {
-        
-        geojson.features = [];
-        var i = 0;
-        var feature_route = create_geojson_line('da a ', data.shape.shapePoints);
-        geojson.features.push(feature_route);
-    
-        var legs = data.legs;
-    
-        while (legs[i]) {
-            var l = legs[i];
-            var j = 0;
-            var jMax = _.size(l.maneuvers);
-            console.log('Maneuvers n.: ' + jMax);
 
-            while (l.maneuvers[j]) {
-                var m = l.maneuvers[j];
-                var feature = create_geojson_point(m.startPoint.lat, 
-                                                   m.startPoint.lng, 
-                                                   m.narrative);
-                geojson.features.push(feature);
-                j++;
-            };
-            i++;
-        };
-        return geojson;
+    get_route: function (data, callback) {
+        geojson.features = [];
+        var feature_route = create_geojson_line('percorso', data.shapePoints);
+        geojson.features.push(feature_route);
+        _run(data.items, callback);
     }
 };
+
+function _run(items, callback) {
+    var i = 0;
+    while (items[i]) {
+        var rs = items[i];
+        // console.log('geojson created ... ' + JSON.stringify(rs));
+        var feature = create_geojson_point(rs.location.lat, 
+                                           rs.locationlng, 
+                                           rs.note);
+        geojson.features.push(feature);
+        i++;
+    };
+
+    if (typeof callback === 'function') {
+      console.log('callback data ... ' + JSON.stringify(geojson));
+      callback(geojson);
+    };
+}
 
 function create_geojson_point (lat, lng, title) {
 
@@ -67,7 +48,8 @@ function create_geojson_point (lat, lng, title) {
           "icon": 'geolocation',
           "color": 'green',  
           "location": [Number(lat),
-                         Number(lng)]  
+                         Number(lng)],
+          "data": {}  
         },
         "geometry": {
           "type": "Point",
@@ -76,6 +58,7 @@ function create_geojson_point (lat, lng, title) {
         }
     };
 
+    // console.log('geojson point ...');
     return feature;
 
 };
@@ -93,6 +76,8 @@ function create_geojson_line (title, coordinates) {
           "coordinates": coordinates
         }
     };
+
+    // console.log('geojson line ...');
 
     return feature;
 

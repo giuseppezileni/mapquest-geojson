@@ -32,7 +32,7 @@ function reverse(callback) {
 The geocoding method take an address and get the associated latitude and longitude.
 
 <pre>geocode(street, city, state, callback)</pre>
-Return JSON data and [GeoJSON](http://geojson.org) for your map.
+Return [GeoJSON](http://geojson.org) for your map.
 
 * street: Street to get latitude and longitude  (Ex. Via Sparano da Bari)  
 * city: City to get latitude and longitude   (Ex. Bari)
@@ -54,7 +54,7 @@ function geocode(callback) {
 The Route Service provides a simple interface to get routing, narrative, and shapes at the same city and state.
 
 <pre>route(origin, destination, city, state, callback)</pre>
-Return JSON data and [GeoJSON](http://geojson.org) for your map.
+Return [GeoJSON](http://geojson.org) for your map.
 
 * origin: Origin to start routing (Ex. Via Sparano da Bari)  
 * destination: Destination to end routing   (Ex. Via Massaua)
@@ -62,7 +62,7 @@ Return JSON data and [GeoJSON](http://geojson.org) for your map.
 * state: State to get routing (Ex. IT for Italy)
 
 <pre>routeLatLng (latS, lngS, latD, lngD, callback)</pre>
-Return JSON data and [GeoJSON](http://geojson.org) for your map.
+Return [GeoJSON](http://geojson.org) for your map.
 
 * latS: Latitude to start routing  
 * lngS: Longitude to end routing   

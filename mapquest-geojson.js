@@ -1,16 +1,24 @@
 var request = require("request");
 var _config = require('./mapquest-geojson.config.js');
 var _geojson = require('./mapquest-geojson.geojson.js');
+var _ = require('underscore');
+var async = require('async');
 
-module.exports.version = '2.0.2';
+module.exports.version = '2.0.4';
 
 var mapquest_data;
 var mapquest = {
-    time: '',
-    distance: '',
-    items: []
+  items: [],
+  shapePoints: {},
+  date: '',
+  time: ''
 };
 var geojson;
+var isError;
+var error_json = {
+  error: '',
+  descrition: ''
+}
 
 module.exports = {
   
@@ -36,10 +44,15 @@ module.exports = {
       if (!error && response.statusCode == 200) {
           mapquest_data = JSON.parse(body);
           create_JSON();
-          geojson = _geojson.get(mapquest_data, lat, lng);
+          geojson = _geojson.get(mapquest);
           if (typeof callback === 'function') {
-              callback(mapquest, geojson);
+              callback(false, geojson);
           };
+      } else {
+        error_json.error += 'can\'t found address by ' + JSON.stringify(q);
+        if (typeof callback === 'function') {
+            callback(true, error_json);
+        };
       }
     });
   },
@@ -63,18 +76,28 @@ module.exports = {
         if (!error && response.statusCode == 200) {
             mapquest_data = JSON.parse(body);
             create_JSON();
-            geojson = _geojson.get(mapquest_data, lat, lng);
+            geojson = _geojson.get(mapquest);
             if (typeof callback === 'function') {
-                callback(mapquest, geojson);
+                callback(false, geojson);
             };
-        };
+        } else {
+          isError = true
+          error_json.error += 'can\'t geocode address by ' + JSON.stringify(q);
+          if (typeof callback === 'function') {
+            callback(isError, error_json);
+          };
+        }
       });      
   }, 
 
+  /*
   route: function (origin, destination, city, state, callback) {
 
     var o = origin + ', ' + city + ', ' + state;
     var e = destination + ', ' + city + ', ' + state;
+
+    console.log('origin: ' +  o);
+    console.log('destinatin: ' +  e);
 
     var qJson = {
       locations:[o,e],
@@ -93,16 +116,20 @@ module.exports = {
         highwayEfficiency: 21.0
       }
     };
+
+    console.log('options routing: ' +  JSON.stringify(qJson));
           
     var u = _config.get_url_route(qJson);    
-    this._routing(u, callback);
+    _routing(u, callback);
 
   },
+
+  */
 
   routeLatLng: function (latS, lngS, latD, lngD, callback) {
       var u = _config.get_url_routeLatLng(latS, lngS, latD, lngD);
       console.log(u);
-      this._routing(u, callback);
+      _routing(u, callback);
   }
     
 };
@@ -116,50 +143,78 @@ function _routing (url, callback) {
         var mq = JSON.parse(body);
         mapquest_data = mq.route;
         route_JSON();
-        geojson = _geojson.get_route(mapquest_data);
-        if (typeof callback === 'function') {
-            callback(mapquest, geojson);
-        };
+        console.log('create geojson ...')
+        _geojson.get_route(mapquest, function (gj) {
+          geojson = gj;
+          console.log('callback return ...');
+          if (typeof callback === 'function') {
+            callback(false, geojson);
+          };
+        });
+        
       } else {
-          // error 
+        // error 
+        isError = true
+        error_json.error = 'can\'t route path by ' + url;
+        if (typeof callback === 'function') {
+            callback(isError, error_json);
+        };
       }
-    });
-            
+    });    
 };
 
 function route_JSON() {
     
+    console.log('mapquesta data: ' + JSON.stringify(mapquest_data));
+
     console.log('*************************');
     console.log('Time estimated: ' + mapquest_data.formattedTime);
     console.log('Distance: ' + mapquest_data.distance + ' mt');
-    mapquest.time = mapquest_data.formattedTime;
-    mapquest.distance = mapquest_data.distance;
+    total_time = mapquest_data.formattedTime;
+    total_distance = mapquest_data.distance;
+    mapquest.time = total_time;
+    mapquest.distance = total_distance;
+    mapquest.shapePoints = mapquest_data.shape.shapePoints
     
     var legs = mapquest_data.legs;
     var i = 0;
+
+    async.each(mapquest_data.legs, function (leg, callback_root) {
+
+      console.log('Maneuvers n.: ' + _.size(leg.maneuvers));
+
+      async.each(leg.maneuvers, function (maneuver, callback_child) {
+          var route_path = {
+              total_distance: total_distance,
+              totale_time: total_time,
+              location: {
+                lat: maneuver.startPoint.lat, // coordinate geografiche latitudine
+                lng: maneuver.startPoint.lng  // coordinate geografiche longitudine
+              },
+              note: maneuver.narrative,       // descrizione del percorso
+              distance: maneuver.distance,    // distanza 
+              time: maneuver.time,            // tempo
+              item: maneuver,
+              values: {}
+          };
+          console.log('****>' + JSON.stringify(route_path));
+          mapquest.items.push(route_path);
+          callback_child();
+      }, function (err) {
+        if (!err) {
+          callback_root();
+        } else {
+          error_json.error += 'error by maneuver child.';
+          callback_root(true);
+        }
+      });
+
+    }, function (err) {
+      if (err) {
+        error_json.error += 'error by maneuver child.';
+      }
+    });
     
-    while (legs[i]) {
-        var l = legs[i];
-        var j = 0;
-        console.log('Maneuvers n.: ' + jMax);
-        
-        while (l.maneuvers[j]) {
-            var m = l.maneuvers[j];
-            var route_path = {
-                location: {
-                  lat: m.startPoint.lat, // coordinate geografiche latitudine
-                  lng: m.startPoint.lng  // coordinate geografiche longitudine
-                },
-                note: m.narrative,       // descrizione del percorso
-                distance: m.distance,    // distanza 
-                time: m.time,            // tempo
-                item: l.maneuvers[j]
-            };
-            j++;
-        };
-        mapquest.items.push(route_path);
-        i++;
-    };
 };
 
 function create_JSON() {
@@ -176,11 +231,17 @@ function create_JSON() {
                 lat: 0,
                 lng: 0
               },
-              data: {}
+              data: {},
+              note: ''
             };
             var location = rs.locations[j];
-            r.location.lat = location.displayLatLng.lat;
-            r.location.lng = location.displayLatLng.lng;
+
+            var lat = location.displayLatLng.lat;
+            var lng = location.displayLatLng.lng;
+            var title = location.street + ', ' +  location.postalCode;
+            r.note = title;
+            r.location.lat = lat;
+            r.location.lng = lng;
             r.data = rs;
             mapquest.items.push(r);
             j++;  

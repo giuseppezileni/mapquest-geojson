@@ -1,4 +1,4 @@
-module.exports.version = '2.0.4';
+module.exports.version = '2.0.5';
 
 module.exports = {
     appkey: 'Fmjtd%7Cluurn162n0%2C7a%3Do5-9wtsuw', 

@@ -4,7 +4,7 @@ var _geojson = require('./mapquest-geojson.geojson.js');
 var _ = require('underscore');
 var async = require('async');
 
-module.exports.version = '2.0.4';
+module.exports.version = '2.0.5';
 
 var mapquest_data;
 var mapquest = {
@@ -44,10 +44,12 @@ module.exports = {
       if (!error && response.statusCode == 200) {
           mapquest_data = JSON.parse(body);
           create_JSON();
-          geojson = _geojson.get(mapquest);
-          if (typeof callback === 'function') {
-              callback(false, geojson);
-          };
+          _geojson.get(mapquest, function (geoj) {
+              geojson = geoj;
+              if (typeof callback === 'function') {
+                callback(false, geojson);
+              };  
+            });
       } else {
         error_json.error += 'can\'t found address by ' + JSON.stringify(q);
         if (typeof callback === 'function') {
@@ -75,11 +77,15 @@ module.exports = {
       request(u, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             mapquest_data = JSON.parse(body);
+            //console.log(JSON.stringify(mapquest_data));
             create_JSON();
-            geojson = _geojson.get(mapquest);
-            if (typeof callback === 'function') {
+            _geojson.get(mapquest, function (geoj) {
+              geojson = geoj;
+              if (typeof callback === 'function') {
                 callback(false, geojson);
-            };
+              };  
+            });
+            
         } else {
           isError = true
           error_json.error += 'can\'t geocode address by ' + JSON.stringify(q);
@@ -89,42 +95,6 @@ module.exports = {
         }
       });      
   }, 
-
-  /*
-  route: function (origin, destination, city, state, callback) {
-
-    var o = origin + ', ' + city + ', ' + state;
-    var e = destination + ', ' + city + ', ' + state;
-
-    console.log('origin: ' +  o);
-    console.log('destinatin: ' +  e);
-
-    var qJson = {
-      locations:[o,e],
-      options:{ 
-        avoids: [],
-        avoidTimedConditions: false,
-        doReverseGeocode: true,
-        shapeFormat: 'raw',
-        generalize: 0,
-        routeType: 'bicycle',
-        timeType: 1,
-        locale: 'it_IT',
-        unit: 'k',
-        enhancedNarrative: false,
-        drivingStyle: 2,
-        highwayEfficiency: 21.0
-      }
-    };
-
-    console.log('options routing: ' +  JSON.stringify(qJson));
-          
-    var u = _config.get_url_route(qJson);    
-    _routing(u, callback);
-
-  },
-
-  */
 
   routeLatLng: function (latS, lngS, latD, lngD, callback) {
       var u = _config.get_url_routeLatLng(latS, lngS, latD, lngD);
@@ -195,9 +165,9 @@ function route_JSON() {
               distance: maneuver.distance,    // distanza 
               time: maneuver.time,            // tempo
               item: maneuver,
-              values: {}
+              value: {}
           };
-          console.log('****>' + JSON.stringify(route_path));
+          // console.log('****>' + JSON.stringify(route_path));
           mapquest.items.push(route_path);
           callback_child();
       }, function (err) {
@@ -219,8 +189,7 @@ function route_JSON() {
 
 function create_JSON() {
     var i = 0;
-    mapquest = [];
-
+    
     while (mapquest_data.results[i]) {
       var rs = mapquest_data.results[i];
       if (_.size(rs.locations) > 0) {

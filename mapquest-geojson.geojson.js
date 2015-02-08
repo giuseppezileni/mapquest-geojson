@@ -1,4 +1,4 @@
-module.exports.version = '2.0.4';
+module.exports.version = '2.0.5';
 
 var geojson = {
     type : "FeatureCollection",
@@ -26,14 +26,16 @@ function _run(items, callback) {
         var rs = items[i];
         // console.log('geojson created ... ' + JSON.stringify(rs));
         var feature = create_geojson_point(rs.location.lat, 
-                                           rs.locationlng, 
+                                           rs.location.lng, 
                                            rs.note);
+        // console.log('adding value to geojson .... ' + JSON.stringify(rs));
+        feature.properties.item = rs;
         geojson.features.push(feature);
         i++;
     };
 
     if (typeof callback === 'function') {
-      console.log('callback data ... ' + JSON.stringify(geojson));
+      // console.log('callback data ... ' + JSON.stringify(geojson));
       callback(geojson);
     };
 }
@@ -49,7 +51,7 @@ function create_geojson_point (lat, lng, title) {
           "color": 'green',  
           "location": [Number(lat),
                          Number(lng)],
-          "data": {}  
+          "item": {}  
         },
         "geometry": {
           "type": "Point",
